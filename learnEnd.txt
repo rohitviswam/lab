@@ -1,0 +1,824 @@
+MainActivity.java===============================================
+package com.example.learnend;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.PopupMenu;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity implements PopupMenu.OnMenuItemClickListener {
+    private MenuItem item;
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(this);
+        popup.inflate(R.menu.pop);
+        popup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.p1:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Select Page");
+                builder.setMessage("Do you want to proceed to the Radio or Date picker?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Date Picker", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity2();
+                    }
+                });
+                builder.setNegativeButton("Radio", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity3();
+                    }
+                });
+                builder.create().show();
+                return true;
+            case R.id.p2:
+                Toast.makeText(this, "Item 2 selected", Toast.LENGTH_SHORT).show();
+                openActivity2();
+                return true;
+            case R.id.p3:
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                builder1.setTitle("Message");
+                builder1.setMessage("Item 2 Selected");
+                builder1.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       dialog.dismiss();
+                    }
+                });
+                builder1.create().show();
+                return true;
+            case R.id.p4:
+                openActivity3();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.m1:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Select Page");
+                builder.setMessage("Do you want to proceed to the Radio or Date picker?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Date Picker", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity2();
+                    }
+                });
+                builder.setNegativeButton("Radio", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity3();
+                    }
+                });
+                builder.create().show();
+                Toast.makeText(this, "Item 1 Selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.m2:
+                Toast.makeText(this, "Item 2 Selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.m3:
+                Toast.makeText(this, "Item 3 Selected", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.m4:
+                AlertDialog.Builder builder3 = new AlertDialog.Builder(MainActivity.this);
+                builder3.setTitle("Exit?");
+                builder3.setMessage("Do you want to quit?");
+                builder3.setCancelable(false);
+                builder3.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder3.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder3.create().show();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    EditText nameid, rollid, sexid;
+    Button bgchange, add, view, update, delete, exit;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        exit = findViewById(R.id.exit);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Exit?");
+                builder.setMessage("Do you want to quit?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+            }
+        });
+        SQLiteDatabase mydatabase = openOrCreateDatabase("example",MODE_PRIVATE,null);
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS people(rollid VARCHAR primary key,nameid VARCHAR,sexid VARCHAR);");
+        nameid = findViewById(R.id.nameid);
+        rollid = findViewById(R.id.rollid);
+        sexid = findViewById(R.id.sexid);
+        add = findViewById(R.id.add);
+        view = findViewById(R.id.view);
+        update = findViewById(R.id.view);
+        delete = findViewById(R.id.delete);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameid.getText().toString();
+                String roll = rollid.getText().toString();
+                String sex = sexid.getText().toString();
+                String sql = "INSERT INTO people (nameid, rollid, sexid) VALUES ('name', 'roll', 'sex');";
+                mydatabase.execSQL(sql);
+            }
+        });
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String roll = rollid.getText().toString();
+                mydatabase.execSQL("DELETE FROM people WHERE rollid ='"+roll+"'");
+            }
+        });
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = nameid.getText().toString();
+                String roll = rollid.getText().toString();
+                String sex = sexid.getText().toString();
+                mydatabase.execSQL("Update people set nameid ='"+name+"', sexid = '"+sex+"'where rollid = '"+roll+"'" );
+            }
+        });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String roll = rollid.getText().toString();
+                Cursor resultSet = mydatabase.rawQuery("Select * from people where rollid = +'" + roll + "'",null);
+                resultSet.moveToFirst();
+                nameid.setText(resultSet.getString(1));
+                sexid.setText(resultSet.getString(2));
+                Log.d("Hello",roll);
+            }
+        });
+
+    }
+    public void openActivity2(){
+        Intent i = new Intent(this,MainActivity2.class);
+        startActivity(i);
+    }
+    public void openActivity3(){
+        Intent i = new Intent(this,MainActivity3.class);
+        startActivity(i);
+    }
+}
+
+
+activity_main.xml============================================================
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/nameid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="101dp"
+        android:layout_marginBottom="2dp"
+        android:ems="10"
+        android:hint="NAME"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/rollid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/rollid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="101dp"
+        android:ems="10"
+        android:hint="Roll No."
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/sexid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameid" />
+
+    <EditText
+        android:id="@+id/sexid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="101dp"
+        android:layout_marginBottom="36dp"
+        android:ems="10"
+        android:hint="SEX"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rollid" />
+
+    <Button
+        android:id="@+id/bgchange"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="148dp"
+        android:layout_marginEnd="160dp"
+        android:onClick="showPopup"
+        android:text="POPUP"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.18"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delete" />
+
+    <Button
+        android:id="@+id/add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="160dp"
+        android:text="ADD"
+        app:layout_constraintBottom_toTopOf="@+id/update"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sexid" />
+
+    <Button
+        android:id="@+id/update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginEnd="160dp"
+        android:text="UPDATE"
+        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add" />
+
+    <Button
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginEnd="165dp"
+        android:text="VIEW"
+        app:layout_constraintBottom_toTopOf="@+id/delete"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/update" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginEnd="160dp"
+        android:layout_marginBottom="148dp"
+        android:text="DELETE"
+        app:layout_constraintBottom_toTopOf="@+id/bgchange"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <Button
+        android:id="@+id/exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="158dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="160dp"
+        android:layout_marginBottom="41dp"
+        android:text="EXIT"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bgchange" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainActivity2.java===========================================================
+package com.example.learnend;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
+public class MainActivity2 extends AppCompatActivity {
+    Button dateid,timeid,backM,RBS;
+    TextView tm, dt;
+    RadioButton RB1,RB2;
+
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main2);
+
+        dateid = findViewById(R.id.dateid);
+        timeid = findViewById(R.id.timeid);
+        backM = findViewById(R.id.backM);
+        tm = findViewById(R.id.tm);
+        dt = findViewById(R.id.dt);
+
+        backM.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        timeid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openTimePicker();
+            }
+        });
+        dateid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDatePicker();
+            }
+        });
+    }
+    private void openDatePicker() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, androidx.appcompat.R.style.Base_Theme_AppCompat_Dialog, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                dt.setText(String.valueOf(year) + "." + String.valueOf(month) + "." + String.valueOf(dayOfMonth));
+            }
+        }, 2023,01,20);
+        datePickerDialog.show();
+    }
+    private void openTimePicker(){
+        TimePickerDialog timePickerDialog = new TimePickerDialog(this, androidx.appcompat.R.style.Base_Theme_AppCompat_Dialog, new TimePickerDialog.OnTimeSetListener() {
+
+            @Override
+
+            public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+
+                tm.setText(String.valueOf(hour) + ":" + String.valueOf(minute));
+
+            }
+
+        }, 15, 30, false);
+
+        timePickerDialog.show();
+    }
+}
+
+activity_main2.xml==============================================================
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity2">
+
+    <Button
+        android:id="@+id/dateid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="64dp"
+        android:text="date"
+        app:layout_constraintBottom_toTopOf="@+id/timeid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/timeid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="155dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="162dp"
+        android:text="time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateid" />
+
+    <Button
+        android:id="@+id/backM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="420dp"
+        android:text="BACK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeid" />
+
+    <TextView
+        android:id="@+id/dt"
+        android:layout_width="375dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="178dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginBottom="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/timeid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dateid" />
+
+    <TextView
+        android:id="@+id/tm"
+        android:layout_width="383dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="178dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginBottom="13dp"
+        app:layout_constraintBottom_toTopOf="@+id/backM"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/timeid" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainActivity3.java==============================================================
+package com.example.learnend;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity3 extends AppCompatActivity {
+    RadioButton RB1,RB2,RB3,RB4;
+    TextView RBT;
+    Button button;
+    String pv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main3);
+        RB1 = findViewById(R.id.RB1);
+        RB2 = findViewById(R.id.RB2);
+        RB3 = findViewById(R.id.RB3);
+        RB4 = findViewById(R.id.RB4);
+        RBT = findViewById(R.id.RBT);
+        button = findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String selecetedCourse="SelectedCourse: ";
+                if(RB1.isChecked()){
+                    selecetedCourse+="JAVA";
+                }
+                if(RB2.isChecked()){
+                    selecetedCourse+="Python";
+                }
+                if(RB3.isChecked()){
+                    selecetedCourse+="Android";
+                }
+                if(RB4.isChecked()){
+                    selecetedCourse+="Angular JS";
+                }
+                pv = selecetedCourse;
+                //RBT.setText(selecetedCourse);
+                openactivity4();
+            }
+        });
+    }
+
+    public void onRadioButtonClicked(View view) {
+        boolean checked = ((RadioButton) view).isChecked();
+        String str = "";
+        switch (view.getId()){
+            case R.id.RB1:
+                if(checked){
+                    str = "JAVA Selected";
+                }
+                break;
+            case R.id.RB2:
+                if(checked){
+                    str = "Python Selected";
+                }
+                break;
+            case R.id.RB3:
+                if(checked){
+                    str = "Android Selected";
+                }
+                break;
+            case R.id.RB4:
+                if(checked){
+                    str = "Angular JS Selected";
+                }
+                break;
+        }
+        Toast.makeText(getApplicationContext(),str, Toast.LENGTH_SHORT).show();
+    }
+
+    public void openactivity4(){
+        Intent i = new Intent(this,MainActivity4.class);
+        i.putExtra("x",pv);
+        startActivity(i);
+    }
+}
+activity_main3.xml====================================================================
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:onClick="onRadioButtonClicked"
+    tools:context=".MainActivity3">
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="343dp"
+        android:layout_height="193dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2">
+
+        <RadioButton
+            android:id="@+id/RB1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="JAVA" />
+
+        <RadioButton
+            android:id="@+id/RB2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="Python" />
+
+        <RadioButton
+            android:id="@+id/RB3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="Android" />
+
+        <RadioButton
+            android:id="@+id/RB4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onRadioButtonClicked"
+            android:text="AngularJS" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="105dp"
+        android:layout_height="19dp"
+        android:layout_marginStart="152dp"
+        android:layout_marginTop="124dp"
+        android:layout_marginEnd="154dp"
+        android:text="Select"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="153dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="164dp"
+        android:text="SUBMIT"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <TextView
+        android:id="@+id/RBT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+MainActivity4.java
+package com.example.learnend;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity4 extends AppCompatActivity {
+    TextView textView;
+    Button button2;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main4);
+        textView = findViewById(R.id.textView);
+        button2 = findViewById(R.id.button2);
+        Intent i = getIntent();
+        String data = i.getStringExtra("x");
+        textView.setText(data);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity4.this);
+                builder.setTitle("Select Page");
+                builder.setMessage("Do you want to proceed to the Home or Radio?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Home", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity1();
+                    }
+                });
+                builder.setNegativeButton("Radio", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        openActivity2();
+                    }
+                });
+                builder.create().show();
+            }
+        });
+    }
+    public void openActivity1(){
+        Intent i = new Intent(this,MainActivity.class);
+        startActivity(i);
+    }
+    public void openActivity2(){
+        Intent i = new Intent(this,MainActivity3.class);
+        startActivity(i);
+    }
+}
+
+activity_main4.xml===================================================================
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity4">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="178dp"
+        android:layout_marginTop="356dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginBottom="356dp"
+        android:text="TextView"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="161dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="272dp"
+        android:text="BACK"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+menu.xml=====================================================================
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Page Selector"
+        android:id="@+id/m1"
+        />
+
+    <item android:title="Item2"
+        android:id="@+id/m2"/>
+
+    <item android:title="Item3"
+        android:id="@+id/m3"/>
+
+    <item android:title="EXIT"
+        android:id="@+id/m4"
+        app:showAsAction="always"/>
+</menu>
+
+pop.xml==============================================================================
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Page Selecter"
+        android:id="@+id/p1"/>
+
+    <item android:title="Open Date and Time Picker"
+        android:id="@+id/p2"/>
+
+    <item android:title="Item3"
+        android:id="@+id/p3"/>
+
+    <item android:title="Open Radio"
+        android:id="@+id/p4"/>
+</menu>
